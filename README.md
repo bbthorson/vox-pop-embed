@@ -13,6 +13,10 @@ of truth, and this tree is regenerated from it on every change: see `SOURCE` for
 the commit. Please don't expect changes made here to stick. Read
 [CONTRIBUTING.md](CONTRIBUTING.md) for how contributions get in.
 
+Code comments sometimes cite paths such as `specs/design-system.md` or
+`docs/...`. Those are Vox Pop's internal design notes in the private
+monorepo; they aren't in this repository.
+
 ## What's here
 
 | Path | What it is |

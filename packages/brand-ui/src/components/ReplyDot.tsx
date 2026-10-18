@@ -406,8 +406,8 @@ export function ReplyDot({
 
     // ─── On-site path: existing direct-upload + authenticated reply ─────────
     //
-    // Bug 2 from `specs/drafts/post-roadmap-followups.md` was "authenticated
-    // reply on public pages — button just doesn't respond." Root cause:
+    // A past bug: "authenticated reply on public pages — button just doesn't
+    // respond." Root cause:
     // every early-return below pre-fix either silently returned OR awaited
     // `getToken(true)` BEFORE flipping to the `sending` phase, leaving the
     // user staring at the same `review` UI with no feedback for 1–3 seconds
@@ -445,12 +445,11 @@ export function ReplyDot({
         // so for any user on the page less than ~55 minutes the cached
         // token is valid. The 401-retry path in `authenticatedApi` is the
         // only legitimate force-refresh case; paying it on every submit
-        // adds 200ms–3s of perceived latency for no benefit (see
-        // `specs/drafts/auth-hardening.md` § Step 4). Originally written
-        // as `getToken(true)` on the assumption that "a write is worth
-        // the round-trip" — Gemini correctly pushed back on #515.
+        // adds 200ms–3s of perceived latency for no benefit. Originally
+        // written as `getToken(true)` on the assumption that "a write is
+        // worth the round-trip"; review pushed back on that.
         //
-        // The `.catch()` is still here because `getIdToken()` can throw
+        // The `.catch()` is still here because `getToken()` can throw
         // on a transient refresh failure (rare for cached tokens, but
         // possible during refresh-window contention). Converting the
         // throw to `null` keeps the error path in the value position

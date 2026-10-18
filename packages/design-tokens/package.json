@@ -50,7 +50,6 @@
     "watch": "tsc --watch --preserveWatchOutput",
     "typecheck": "tsc --noEmit",
     "test": "node --test tokens.lockstep.test.mjs",
-    "test:spec": "node --test spec-header.test.mjs",
     "lint": "eslint .",
     "prepare": "if command -v tsc >/dev/null 2>&1; then tsc; fi"
   },
