@@ -1,0 +1,241 @@
+/**
+ * Vox Pop design tokens — CSS custom properties for the light and dark
+ * variants of the workspace and editorial registers.
+ *
+ * Shape:
+ *   :root                 → light, workspace register (default)
+ *   .dark                 → dark, workspace register
+ *   .theme-editorial      → light, editorial register (public pages)
+ *   .dark .theme-editorial → dark, editorial register
+ *
+ * Apps import this file once (apps/web via `globals.css`, apps/embed via
+ * its Vite entry) and consume the values either via Tailwind classes
+ * (the preset exported by `@vox-pop/design-tokens/tailwind-preset`
+ * maps these to theme keys) or via raw CSS `hsl(var(--token))` etc.
+ *
+ * No non-token rules live here. Resets, animations, scrollbar styling,
+ * focus-ring rules — anything that ISN'T a CSS variable — stay in each
+ * app's own globals.css. Tokens are the foundation; everything else
+ * composes them.
+ *
+ * Note: NO `@layer base` wrapper. CSS imported by webpack/PostCSS gets
+ * its own pipeline, so `@layer base` here couldn't reference the
+ * `@tailwind base` directive from the importing app. Top-level
+ * variable definitions on `:root` etc. still apply correctly — `:root`
+ * is the lowest-specificity origin, so any Tailwind utility composed
+ * from these vars still overrides at the use site.
+ */
+
+/* Workspace register, light.
+   Shares the editorial hue family and ink ramp; stays distinct on density
+   character (brighter working surface, lighter muted, tighter radius).
+   See the lightTokens docblock in tokens.ts for the D7 contrast rationale. */
+:root {
+    --background: 36 30% 99%;
+    --foreground: 20 20% 14%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 20 20% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 20% 14%;
+    /* Primary: Warm Coral - friendly, energetic, voice-forward.
+       44% is the lightest coral clearing AA on all three grounds it sits on:
+       white text over it (4.95), and coral-as-text over the workspace page
+       (4.85) and editorial paper (4.66). */
+    --primary: 12 86% 44%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 25% 96%;
+    --secondary-foreground: 20 20% 14%;
+    --muted: 30 25% 96%;
+    --muted-foreground: 25 12% 38%;
+    /* Accent: warm gold. Calmer than the old 35 100% 50% — that saturation is
+       what put muted metadata at 2.16 on a filled row (audit finding D7). */
+    --accent: 32 70% 62%;
+    /* Dark ink, not white: white on this accent is 2.20, warm near-black 7.60. */
+    --accent-foreground: 20 25% 12%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 28 22% 88%;
+    /* Control boundaries, NOT decorative rules — see --border above. 52% is the
+       lightest value clearing WCAG 1.4.11's 3:1 on every ground a control sits
+       on; the tightest is editorial's sunken surface at 3.12. */
+    --input: 28 22% 52%;
+    /* Ring matches primary for cohesion */
+    --ring: 12 86% 44%;
+    --radius: 0.75rem;
+    /* Radius for STRUCTURAL surfaces — panels, plates, listing rows, tables.
+       Held apart from `--radius` (which controls buttons, inputs and the other
+       interactive primitives) so a register can square off its surfaces without
+       squaring off its controls. See the marketing sub-register at the bottom
+       of this file for why that distinction has to exist. */
+    --radius-plate: 0.75rem;
+
+    /* Enhanced color palette */
+    --success: 158 64% 42%;
+    --success-foreground: 158 64% 97%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 48 96% 89%;
+    --info: 199 89% 48%;
+    --info-foreground: 204 94% 94%;
+
+    /* Cross-register semantic tokens (shared by workspace and editorial) */
+    /* Scrim — near-black in both schemes; used with an alpha modifier only. */
+    --overlay: 20 25% 8%;
+    --overlay-foreground: 0 0% 100%;
+    --surface-raised: 0 0% 100%;
+    --surface-sunken: 30 25% 94%;
+    --ink-strong: 20 25% 12%;
+    --ink-muted: 25 14% 32%;
+    --ink-subtle: 25 14% 42%;
+    --accent-warm: 20 75% 55%;
+    --rule: 28 18% 78%;
+    --shadow-editorial: 0 6px 24px -8px hsl(20 15% 15% / 0.08), 0 2px 6px -2px hsl(20 15% 15% / 0.04);
+  }
+
+  /* Workspace register, dark. Warm espresso rather than deep navy, matching
+     the editorial dark family but a step deeper throughout (7% page vs 9%,
+     12% raised vs 14%) — a dense two-pane layout needs more separation
+     between ground and panels than a single column of prose does. */
+  .dark {
+    --background: 24 14% 7%;
+    --foreground: 32 28% 92%;
+    --card: 24 14% 10%;
+    --card-foreground: 32 28% 92%;
+    --popover: 24 14% 10%;
+    --popover-foreground: 32 28% 92%;
+    /* Slightly lighter coral for dark mode visibility */
+    --primary: 14 88% 62%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 24 14% 14%;
+    --secondary-foreground: 32 28% 92%;
+    --muted: 24 14% 14%;
+    --muted-foreground: 32 14% 65%;
+    /* Warm accent for dark mode */
+    --accent: 20 55% 55%;
+    /* Dark ink on the accent (5.00) rather than white (1.90). */
+    --accent-foreground: 20 25% 12%;
+    --destructive: 0 62.8% 45%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 24 14% 20%;
+    /* 44% — tightest ground is editorial dark's raised surface at 3.17. */
+    --input: 24 14% 44%;
+    --ring: 14 88% 62%;
+
+    /* Enhanced color palette for dark mode */
+    --success: 158 60% 50%;
+    --success-foreground: 158 60% 97%;
+    --warning: 38 92% 56%;
+    --warning-foreground: 48 96% 12%;
+    --info: 199 89% 56%;
+    --info-foreground: 204 94% 12%;
+
+    /* Cross-register semantic tokens */
+    --overlay: 20 25% 4%;
+    --overlay-foreground: 0 0% 100%;
+    --surface-raised: 24 14% 12%;
+    --surface-sunken: 24 14% 5%;
+    --ink-strong: 32 28% 94%;
+    --ink-muted: 32 16% 72%;
+    --ink-subtle: 32 12% 52%;
+    --accent-warm: 20 70% 60%;
+    --rule: 24 14% 24%;
+    --shadow-editorial: 0 6px 24px -8px hsl(0 0% 0% / 0.4), 0 2px 6px -2px hsl(0 0% 0% / 0.3);
+  }
+
+  /* Editorial register — scoped to public pages via .theme-editorial on route-group layout.
+     Warm paper + serif display. See specs/design-system.md dual-register section. */
+  .theme-editorial {
+    --background: 34 36% 97%;
+    --foreground: 20 20% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 20% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 20% 14%;
+    --primary: 12 86% 44%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 30% 94%;
+    --secondary-foreground: 20 20% 14%;
+    --muted: 30 25% 94%;
+    --muted-foreground: 25 12% 38%;
+    --accent: 32 70% 62%;
+    --accent-foreground: 20 25% 12%;
+    --border: 28 22% 88%;
+    /* Control boundaries, NOT decorative rules — see --border above. 52% is the
+       lightest value clearing WCAG 1.4.11's 3:1 on every ground a control sits
+       on; the tightest is editorial's sunken surface at 3.12. */
+    --input: 28 22% 52%;
+    --ring: 12 86% 44%;
+    --radius: 1rem;
+    --radius-plate: 1rem;
+
+    --surface-raised: 0 0% 100%;
+    --surface-sunken: 30 25% 94%;
+    --ink-strong: 20 25% 12%;
+    --ink-muted: 25 14% 32%;
+    /* Darkened from 55% (3.13:1 on the warm-paper background — failed WCAG
+       AA for the 12px EditorialMeta labels) to 42% (4.96:1, passes), while
+       staying clearly lighter than ink-muted (32%) so the ink ramp keeps
+       its hierarchy. Editorial dark-mode ink-subtle already clears AA. */
+    --ink-subtle: 25 14% 42%;
+    --accent-warm: 20 75% 55%;
+    --rule: 28 18% 78%;
+    --shadow-editorial: 0 6px 24px -8px hsl(20 15% 15% / 0.08), 0 2px 6px -2px hsl(20 15% 15% / 0.04);
+  }
+
+  /* Editorial register — dark "newsprint on espresso" variant */
+  .dark .theme-editorial {
+    --background: 24 14% 9%;
+    --foreground: 32 28% 92%;
+    --card: 24 14% 12%;
+    --card-foreground: 32 28% 92%;
+    --popover: 24 14% 12%;
+    --popover-foreground: 32 28% 92%;
+    --primary: 14 88% 62%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 24 14% 14%;
+    --secondary-foreground: 32 28% 92%;
+    --muted: 24 14% 14%;
+    --muted-foreground: 32 14% 65%;
+    --accent: 20 55% 55%;
+    --accent-foreground: 20 25% 12%;
+    --border: 24 14% 20%;
+    /* 44% — tightest ground is editorial dark's raised surface at 3.17. */
+    --input: 24 14% 44%;
+    --ring: 14 88% 62%;
+
+    --surface-raised: 24 14% 14%;
+    --surface-sunken: 24 14% 7%;
+    --ink-strong: 32 28% 94%;
+    --ink-muted: 32 16% 72%;
+    --ink-subtle: 32 12% 52%;
+    --accent-warm: 20 70% 60%;
+    --rule: 24 14% 24%;
+    --shadow-editorial: 0 6px 24px -8px hsl(0 0% 0% / 0.4), 0 2px 6px -2px hsl(0 0% 0% / 0.3);
+  }
+
+  /* ── Marketing sub-register ────────────────────────────────────────────
+     `.register-marketing`, applied by apps/public's MarketingLayout on top of
+     `.theme-editorial`. Scopes the landing/pricing/help/legal surfaces; the
+     reply-capture surface deliberately does NOT get it.
+
+     Why a sub-register rather than a second theme: the capture page and the
+     marketing page want the same PALETTE (one brand across one origin — that
+     is what the RootLayout comment argues for) but opposite DENSITY. A
+     stranger deciding whether to press record needs a calm, rounded, roomy
+     page; a visitor deciding whether to sign up is reading a directory. So
+     this block overrides layout character only, and not one colour.
+
+     That is also why it has no twin in tokens.ts. `TokenSet` exists for the
+     consumers with no cascade to read — Canvas, the OG card renderer, the
+     mobile theme generator — and none of them render a marketing page. The
+     lockstep test still covers every variable named here, because
+     `--radius-plate` is a TokenSet field defined on the registers above.
+
+     Controls keep their radius on purpose. Squaring off a button makes it stop
+     reading as a button, and the whole point of the dense treatment is that
+     the interactive surfaces stay obvious inside it. `--radius` is untouched
+     here, and the shared Button primitive is on a literal `rounded-xl`
+     (0.75rem in the Tailwind preset), so neither follows the plates down. */
+  .register-marketing {
+    --radius-plate: 0rem;
+  }

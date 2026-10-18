@@ -1,0 +1,10 @@
+{
+    "//": "For the Hono services that run on workerd: apps/vox-pop-api and apps/telephony. No DOM libs and no JSX — a Worker has neither. Both are bundled by wrangler rather than emitted by tsc, hence noEmit with sourceMap for the bundler to consume.",
+    "extends": "./base.json",
+    "compilerOptions": {
+        "declaration": false,
+        "noEmit": true,
+        "sourceMap": true,
+        "types": ["node"]
+    }
+}

@@ -1,0 +1,38 @@
+{
+  // Assets-only WORKER (not Pages), built and deployed by Workers Builds
+  // straight from git.
+  //
+  // There is deliberately NO `main` and NO `assets.binding`: apps/embed is a
+  // plain Vite SPA with no server code at all, and a binding is only valid
+  // alongside a Worker script. Nothing executes here — Cloudflare just serves
+  // the files. Everything the app needs is inlined at build time from VITE_*
+  // vars in .env.production.
+  //
+  // Why a Worker rather than a Pages project: this had never been created on
+  // Cloudflare in any form, so there was nothing to migrate. It was also stuck
+  // — `wrangler pages deploy` cannot create a Pages project non-interactively,
+  // so the deploy had nowhere to land until someone ran `pages project create`
+  // by hand. `wrangler deploy` creates the Worker on its first run, which
+  // removes that step entirely.
+  //
+  // `not_found_handling` is the SPA fallback, and it MUST be explicit. Pages
+  // inferred SPA behaviour from the presence of index.html; Workers refuses to
+  // guess. This replaces the `/*  /index.html  200` rule in public/_redirects
+  // — without it the client-routed `/@handle/promptId` URL that the widget
+  // iframes would 404 instead of booting the app. Real files still win over
+  // the fallback, so /widget.js, /assets/* and the fonts keep serving
+  // themselves.
+  //
+  // public/_headers still applies — Workers supports it natively for static
+  // assets. Read the framability warning in that file before touching it: this
+  // app must never send X-Frame-Options or frame-ancestors.
+  "name": "vox-pop-embed",
+  "compatibility_date": "2026-08-01",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}

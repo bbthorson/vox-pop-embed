@@ -1,0 +1,11 @@
+node_modules
+dist
+.env
+.env.local
+*.local
+
+# Production env is checked in — Vite needs the prod URLs baked into the
+# bundle at build time. These are public URLs, not secrets. The root
+# `.gitignore` blocks `.env*` globally; explicitly allow this one.
+!.env.production
+

@@ -1,0 +1,32 @@
+/**
+ * Vox Pop motion tokens — easing and duration custom properties.
+ *
+ * Deliberately a separate file from `tokens.css`, not a block inside it.
+ * `tokens.css` is one half of a strictly enforced twin: `tokens.lockstep.test.mjs`
+ * asserts that EVERY custom property declared there has a matching field on the
+ * `TokenSet` exported from `tokens.ts`, so the cascade-free consumers (Canvas,
+ * the mobile theme generator, OG image rendering) can read the same palette.
+ *
+ * Motion values have no business in that set — an OG card has no easing — and
+ * adding them would either break the guard or force junk fields onto every
+ * register's `TokenSet`. Keeping them here leaves the color lockstep intact.
+ *
+ * Register-independent by nature: timing does not change between light/dark or
+ * workspace/editorial, so these are declared once on `:root` with no overrides.
+ *
+ * The JS twin for Framer Motion lives at `@vox-pop/brand-ui`'s `EASE_STANDARD`
+ * — CSS animations read `--ease-standard`, JS animations read that constant.
+ */
+
+:root {
+    /*
+     * The curve already used ad hoc across the apps' `globals.css` keyframes
+     * (`fade-in`, `slide-up`, `scale-in`) and named in specs/design-system.md
+     * § 3. Tokenised so those can eventually reference one value instead of
+     * repeating the bezier string.
+     */
+    --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+    --duration-fast: 0.2s;
+    --duration-base: 0.3s;
+}

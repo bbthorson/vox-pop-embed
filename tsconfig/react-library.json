@@ -1,0 +1,10 @@
+{
+    "//": "For the packages that ship React components consumed by apps/web and apps/public: @vox-pop/ui, @vox-pop/brand-ui, @vox-pop/web-auth, @vox-pop/bff-client. Adds the DOM libs and the automatic JSX runtime on top of the base. Whether a package EMITS is deliberately not decided here — ui and brand-ui build a dist, bff-client and web-auth are consumed from source — so each sets outDir/rootDir/noEmit itself.",
+    "extends": "./base.json",
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "allowSyntheticDefaultImports": true,
+        "declaration": true
+    }
+}

@@ -1,0 +1,35 @@
+# Cloudflare Pages headers (https://developers.cloudflare.com/pages/configuration/headers/)
+# Vite copies public/ into dist/, so this lands at the deploy root.
+#
+# ⚠️ Deliberately NO frame-ancestors / X-Frame-Options here, and none may be
+# added. This app is the OPPOSITE of apps/public: it is the chrome-less,
+# cookie-less recorder that a creator's own site frames from an arbitrary
+# origin, and it is what oEmbed unfurls point at. apps/public carries the
+# responder session cookie and is locked to `frame-ancestors 'none'`; this one
+# must stay framable by anyone. Adding a frame header here silently breaks every
+# embed in the wild.
+
+# Fingerprinted build output — safe to cache forever. This covers the fonts too:
+# @fontsource ships them through the bundler, so they emit to /assets/ with a
+# content hash like everything else.
+#
+# Do not add a second, extension-based rule (`**/*.@(js|css|woff|woff2|ttf|eot)`)
+# alongside the /assets/* one: Pages APPENDS the headers of every matching rule
+# instead of letting the most specific win, so the overlap emits a doubled `Cache-Control: public, max-age=31536000,
+# immutable, public, max-age=31536000, immutable`.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# NO rule for the HTML shell, deliberately. No explicit no-cache/no-store on
+# /index.html is needed: Pages canonicalizes /index.html to / with a
+# 308 and serves every HTML response — `/` and the SPA-fallback paths alike —
+# as `public, max-age=0, must-revalidate` by default. That already forces a
+# revalidation before reuse, so the shell can never pin a browser to stale asset
+# hashes. Verified against `wrangler pages dev`; a `/index.html` rule here would
+# match a path nothing is ever served from.
+
+# The loader script is the one URL third-party sites hardcode, so it can never
+# go immutable — a creator who pasted the snippet must pick up fixes. Short
+# cache with revalidation instead.
+/widget.js
+  Cache-Control: public, max-age=300, must-revalidate

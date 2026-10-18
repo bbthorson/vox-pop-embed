@@ -1,0 +1,64 @@
+{
+  "name": "@vox-pop/brand-ui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Vox Pop's signature presentation layer — the dot-mark family (AudioDot / ListenDot / ReplyDot / DotString), editorial typography, motion providers and presets, the audio recorder, and the composed EmbedPrompt. Consumed by ALL THREE clients: apps/web (dashboard), apps/public (capture) and apps/embed. Distinct from @vox-pop/ui, which is the generic shadcn/Radix primitive layer. Named brand-ui since 2026-08-22 — it was embed-ui, after the smallest of its three consumers. Framework-portable: no Next.js, no Firebase, no apps/* paths. Auth + uploader + nav adapters arrive via props (ports).",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./ports": {
+      "import": "./dist/ports.js",
+      "types": "./dist/ports.d.ts"
+    },
+    "./static": {
+      "import": "./dist/static.js",
+      "types": "./dist/static.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch --preserveWatchOutput",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
+    "prepare": "if command -v tsc >/dev/null 2>&1; then tsc; fi",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
+  },
+  "//@antiphony/capture-kit": "The MediaRecorder state machine, which this package used to hand-roll. A caret, unlike the exact pin `packages/shared` puts on `@antiphony/shared`: that one is a protocol contract where an unattended bump is how drift starts, this is browser primitives with no wire shape to disagree about. On a 0.x version a caret already admits patches only.",
+  "dependencies": {
+    "@antiphony/capture-kit": "^0.1.0",
+    "@vox-pop/design-tokens": "*",
+    "clsx": "^2.1.1",
+    "framer-motion": "^11.15.0",
+    "lucide-react": "^0.470.0",
+    "tailwind-merge": "^3.7.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "eslint": "^9.39.2",
+    "jsdom": "^25.0.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.1",
+    "vitest": "^4.1.9"
+  }
+}

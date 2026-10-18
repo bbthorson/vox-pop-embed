@@ -1,0 +1,47 @@
+{
+  "name": "@vox-pop/embed",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Vox Pop embed — standalone Vite + React SPA serving the chrome-less prompt iframe. Cross-origin from apps/web; reads the Vox Pop BFF (@vox-pop/api) directly. Deploys as static assets to embed.voxpop.audio.",
+  "type": "module",
+  "//scripts.build": "The `emit-version` step writes dist/version.json from COMMIT_SHA/BUILD_TIME so the deploy can assert which commit is being served. This app is an assets-only Worker (no `main` in wrangler.jsonc), so unlike apps/web and apps/public it cannot answer a dynamic route from a deploy-time --var — the value has to be baked in at build time. See the script.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build && node scripts/emit-version.mjs",
+    "build:cf": "npm --prefix ../.. run build:packages:embed && npm run build",
+    "deploy": "wrangler deploy",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@fontsource/arvo": "^5.3.0",
+    "@fontsource/rubik": "^5.3.0",
+    "@vox-pop/brand-ui": "*",
+    "@vox-pop/design-tokens": "*",
+    "preact": "^10.29.8",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.0.0"
+  },
+  "//@types/node": "Declared HERE, not inherited from the root. `vite.config.ts` imports `node:url`, and `build:cf` runs `tsc --noEmit` over it — but Workers Builds (and ci.yml's mirror of it) install with `npm ci --workspace=apps/embed`, which installs this workspace and its workspace dependencies and NOTHING from the root package.json, so a root @types/node is not there when it matters. This app was the ONLY one missing the declaration (public, mobile, vox-pop-api and telephony all carry it), which is why vox-pop-embed's Workers Build failed from 2026-09-08 until ci.yml gained a job that mirrors that install. Same reasoning as the esbuild and @antiphony/shared notes in packages/shared/package.json: the only placement that survives every install shape is on the package that needs it.",
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "autoprefixer": "^10.6.1",
+    "eslint": "^9.39.2",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^15.14.0",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.1",
+    "vite": "^8.3.1",
+    "vitest": "^4.1.11",
+    "wrangler": "4.149.0"
+  }
+}

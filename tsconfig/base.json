@@ -1,0 +1,14 @@
+{
+    "//": "Shared TypeScript floor for this monorepo. Every option here was already identical across the workspaces that extend it — this file is a record of that agreement, not a change to it. Per-workspace concerns (outDir, rootDir, paths, noEmit, include/exclude) stay in the workspace, because they genuinely differ. Not extended by apps/web, apps/public or apps/mobile: those extend their framework's base (Next writes its own, astro/tsconfigs/strict, expo/tsconfig.base) and the framework owns these choices there.",
+    "compilerOptions": {
+        "target": "es2022",
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "isolatedModules": true,
+        "resolveJsonModule": true
+    }
+}

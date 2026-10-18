@@ -1,0 +1,67 @@
+{
+  "name": "@vox-pop/design-tokens",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Vox Pop design tokens — CSS variables, TS constants, and the shared Tailwind preset consumed by apps/web (Next.js) and apps/embed (Vite, future).",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "//exports": [
+    "`default`, not `import`. tsconfig emits COMMONJS here, but every subpath",
+    "used to be exposed under the `import` condition alone — so `require()` of a",
+    "perfectly requireable CJS file was rejected by the exports map itself with",
+    "ERR_PACKAGE_PATH_NOT_EXPORTED.",
+    "",
+    "That is not hypothetical: tailwind.config.ts does",
+    "`import { preset } from '@vox-pop/design-tokens/tailwind-preset'`, and the",
+    "loader postcss uses for it (jiti) resolves in CJS mode. It broke the",
+    "Cloudflare build of apps/public with exactly that error. It stayed hidden",
+    "locally because the Astro/Vite path resolves the same config through ESM.",
+    "",
+    "`default` matches any condition, so both module systems reach the file.",
+    "`types` must stay FIRST — conditions are matched in declaration order."
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./tokens.css": "./src/tokens.css",
+    "./motion.css": "./src/motion.css",
+    "./tokens": {
+      "types": "./dist/tokens.d.ts",
+      "default": "./dist/tokens.js"
+    },
+    "./tailwind-preset": {
+      "types": "./dist/tailwind-preset.d.ts",
+      "default": "./dist/tailwind-preset.js"
+    },
+    "./fonts": {
+      "types": "./dist/fonts.d.ts",
+      "default": "./dist/fonts.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src/tokens.css",
+    "src/motion.css"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch --preserveWatchOutput",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test tokens.lockstep.test.mjs",
+    "test:spec": "node --test spec-header.test.mjs",
+    "lint": "eslint .",
+    "prepare": "if command -v tsc >/dev/null 2>&1; then tsc; fi"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "eslint": "^9.39.2",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.1"
+  }
+}

@@ -1,0 +1,11 @@
+{
+    "extends": "../../tsconfig/react-library.json",
+    "compilerOptions": {
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "noEmit": false
+    },
+    "include": ["src/**/*"],
+    "//exclude": "Tests are excluded from the BUILD so they never land in dist (apps/public scans dist for Tailwind classes and knip reads it for dead-code). They are typechecked via tsconfig.test.json.",
+    "exclude": ["node_modules", "dist", "src/**/*.test.tsx", "src/**/*.test.ts", "src/test/**"]
+}

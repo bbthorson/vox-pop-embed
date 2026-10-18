@@ -1,0 +1,56 @@
+/* Design tokens — CSS custom properties for :root, .dark,
+   .theme-editorial, .dark .theme-editorial. Shared with apps/web.
+   See `packages/design-tokens/src/tokens.css`.
+
+   ⚠️ MUST stay above the @tailwind directives. CSS requires @import to precede
+   every other statement, so with this below them postcss dropped it outright
+   (it warned: "@import must precede all other statements") and the embed
+   shipped with NO colour tokens at all — every `hsl(var(--primary))` in the
+   emitted utilities referenced an undefined property, so the browser threw the
+   declaration away. `.theme-editorial` was absent from the built CSS entirely,
+   which is why the dots rendered as bare outlines on white instead of coral on
+   warm paper. */
+@import '@vox-pop/design-tokens/tokens.css';
+@import '@vox-pop/design-tokens/motion.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* @fontsource/* sets font-family on `.rubik` / `.arvo` selectors but
+   doesn't define the `--font-rubik` / `--font-arvo` CSS variables the
+   Tailwind preset references. Wire them up here so `font-sans` and
+   `font-heading` resolve to the right families. */
+:root {
+    --font-rubik:
+        'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-arvo: 'Arvo', Georgia, serif;
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    html,
+    body,
+    #root {
+        height: 100%;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+        font-family: var(--font-rubik);
+        font-feature-settings: 'cv01', 'cv02', 'cv03', 'cv04';
+        margin: 0;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-arvo);
+    }
+}
