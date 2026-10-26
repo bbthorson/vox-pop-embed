@@ -19,6 +19,8 @@ import { VOXPOP_API_BASE_URL } from './config';
  * the whole record/view tree with it), and a client that hard-fails on an
  * upstream field it never reads is a liability. Unknown keys are stripped;
  * the fields we DO render are validated (no casts across the trust boundary).
+ * `api.contract.test.ts` holds them to the BFF's committed `openapi.json`, so a
+ * rename upstream fails CI rather than blanking an iframe.
  */
 
 /**
@@ -79,7 +81,7 @@ const AudioEmbedViewSchema = z.object({
  * iframe must not blank out because an upstream serializer someday emits an
  * explicit `null`. Every consumer already reads these through `?.` / `??`.
  */
-const PromptViewSchema = z.object({
+export const PromptViewSchema = z.object({
     uri: z.string(),
     kind: z.enum(['prompt', 'reply']),
     authorId: z.string(),
@@ -93,7 +95,7 @@ const PromptViewSchema = z.object({
 export type PromptView = z.infer<typeof PromptViewSchema>;
 
 /** The BFF's public profile projection (`GET /api/v1/users/:handle`). */
-const ProfileViewSchema = z.object({
+export const ProfileViewSchema = z.object({
     id: z.string(),
     handle: z.string().nullish(),
     displayName: z.string().nullish(),

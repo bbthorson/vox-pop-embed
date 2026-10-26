@@ -47,6 +47,8 @@ class MockPointerEvent extends Event {
 if (typeof window !== 'undefined') {
     window.PointerEvent = MockPointerEvent as unknown as typeof PointerEvent;
     window.HTMLElement.prototype.scrollIntoView = vi.fn();
+    // A tab's reset-to-list scrolls its list pane to the top.
+    window.HTMLElement.prototype.scrollTo = vi.fn();
     window.HTMLElement.prototype.hasPointerCapture = vi.fn();
     window.HTMLElement.prototype.releasePointerCapture = vi.fn();
 
