@@ -33,7 +33,7 @@
  */
 
 // Components
-export { ReplyDot } from './components/ReplyDot';
+export { ReplyDot, PROMPT_CLOSED_MESSAGE } from './components/ReplyDot';
 export { ListenDot } from './components/ListenDot';
 export type { ListenDotMediaSession } from './components/ListenDot';
 /**

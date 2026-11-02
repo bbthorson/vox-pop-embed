@@ -98,12 +98,11 @@ export function App() {
 
 /**
  * Embed composition — renders the shared `EmbedPrompt` from
- * `@vox-pop/brand-ui`, the single source of the embed layout. apps/public's
- * `?mode=embed` renders the same component, so the chrome-less iframe looks
- * identical across origins.
+ * `@vox-pop/brand-ui`, the single source of the embed layout.
  *
  * The only apps/embed-specific concern is the origins (build-time env rather
- * than `APP_CONFIG`, because apps/embed is cross-origin from both).
+ * than `APP_CONFIG`, because apps/embed is cross-origin from both the BFF and
+ * apps/public).
  */
 function EmbedView({ user, prompt }: { user: ProfileView; prompt: PromptView }) {
     const promptId = prompt.uri.slice(prompt.uri.lastIndexOf('/') + 1);

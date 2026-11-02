@@ -380,7 +380,10 @@ export function ListenDot({
         }
       >
         <m.div {...buttonScalePrimary}>
-          <AnimatePresence mode="wait">
+          {/* `initial={false}` so the first glyph is drawn at full opacity in
+              server-rendered HTML instead of `iconSwap`'s `opacity: 0` start,
+              which hid the Play icon until hydration. Swaps still animate. */}
+          <AnimatePresence mode="wait" initial={false}>
             {isPlaying ? (
               <m.div key="pause" {...iconSwap}>
                 {/* Size comes from `dot-metrics` rather than a Tailwind tier —

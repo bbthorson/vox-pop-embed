@@ -539,6 +539,7 @@ export function ReplyDot({
                     setPhase('review');
                     authGate.dismissAuth();
                 },
+                { audioBlob },
             );
             return;
         }
@@ -585,7 +586,7 @@ export function ReplyDot({
             case 'review':
                 return 'Recording captured. Play it back, discard it, or send your reply.';
             case 'authenticating':
-                return 'Recording saved. Verify your phone number to send it.';
+                return 'Recording saved. Sign in to send it.';
             case 'sending':
                 return 'Sending your reply.';
             default:
@@ -647,7 +648,11 @@ export function ReplyDot({
                             />
                         )}
 
-                        <AnimatePresence mode="wait">
+                        {/* `initial={false}`: the idle mic is visible in
+                            server-rendered HTML rather than waiting on
+                            hydration at `phaseTransition`'s `opacity: 0`.
+                            Phase changes still animate. */}
+                        <AnimatePresence mode="wait" initial={false}>
                             {/* IDLE — Mic button.
                                 Bug 4 sized the primary actions so the central
                                 control doesn't jump as the phase changes; the

@@ -34,14 +34,14 @@ export interface EmbedPromptProps {
     displayName?: string;
     /**
      * Origin of the Vox Pop BFF, where `POST /api/v1/audio/upload-pending`
-     * lives. Both embed surfaces call it cross-origin — `promptId` is an
-     * Antiphony post id, so the upload has to land somewhere that can resolve
-     * one. See ReplyDot's `voxPopApiBaseUrl`.
+     * lives. The embed calls it cross-origin — `promptId` is an Antiphony post
+     * id, so the upload has to land somewhere that can resolve one. See
+     * ReplyDot's `voxPopApiBaseUrl`.
      */
     voxPopApiBaseUrl: string;
     /**
-     * Origin of the apps/web host that completes the embed handoff (the
-     * top-frame redirect target). See ReplyDot's `hostAppBaseUrl`.
+     * Origin of apps/public, whose prompt page completes the embed handoff
+     * (the top-frame redirect target). See ReplyDot's `hostAppBaseUrl`.
      */
     hostAppBaseUrl: string;
     /**
@@ -49,9 +49,9 @@ export interface EmbedPromptProps {
      *
      * Required and undefaulted for the same reason it is there: this package is
      * presentation, and the number is decided in
-     * `@vox-pop/shared/types/audio-limits`. Both consumers pass
-     * `REPLY_MAX_DURATION_MS`, which is what keeps the embed and the full
-     * public page enforcing one limit instead of two.
+     * `@vox-pop/shared/types/audio-limits`. apps/embed passes
+     * `REPLY_MAX_DURATION_MS`, and so does the full public prompt page to its
+     * own ReplyDot, which is what keeps them enforcing one limit, not two.
      */
     maxDurationMs: number;
 }
@@ -60,19 +60,18 @@ export interface EmbedPromptProps {
  * EmbedPrompt — the chrome-less, anonymous-only prompt composition rendered
  * inside a narrow iframe (typically 340–480px wide).
  *
- * This is the SINGLE source of the embed layout. Both consumers render it:
- *   - `apps/embed` — the standalone cross-origin Vite bundle
- *     (embed.voxpop.audio), which has no Next.js and no auth.
- *   - the public prompt page's `?mode=embed` branch, served from its own
- *     origin.
+ * This is the SINGLE source of the embed layout, rendered by `apps/embed` —
+ * the standalone cross-origin Vite bundle (embed.voxpop.audio), which has no
+ * auth. (apps/public used to render it too, under `?mode=embed`; that branch
+ * was removed in Stream 4 F7 I, since a page carrying the responder cookie can
+ * never be framed by a third party.)
  *
- * The full public prompt page (`EditorialPublicPrompt`) is intentionally NOT
- * this component — it's a superset (in-page auth, share, the merged-dot
- * success animation, responsive side-by-side layout) — but it composes the
- * same `@vox-pop/brand-ui` primitives, so the dot design stays consistent.
- *
- * Differences between the two embed surfaces are exactly the props below (the
- * BFF + host origins); everything visual lives here.
+ * The full public prompt page (`EditorialPublicPrompt` in apps/public) is
+ * intentionally NOT this component — it's a superset (in-page auth, share, the
+ * merged-dot success animation, responsive side-by-side layout) — but it
+ * composes the same `@vox-pop/brand-ui` primitives, so the dot design stays
+ * consistent. A change to what the prompt page shows about the prompt itself
+ * belongs here too.
  */
 export function EmbedPrompt({
     promptId,

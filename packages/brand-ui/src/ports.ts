@@ -98,8 +98,15 @@ export interface UploadedAudio {
  * the gate (auth happens on the host domain).
  */
 export interface DotsAuthGate {
-    /** Show the auth sheet. Calls `onAuthenticated` after a successful auth, `onCancel` if the user dismisses. */
-    requestAuth(onAuthenticated: () => void, onCancel: () => void): void;
+    /**
+     * Show the auth sheet. Calls `onAuthenticated` after a successful auth,
+     * `onCancel` if the user dismisses.
+     *
+     * `context.audioBlob` is the recording waiting on this auth. A sign-in that
+     * has to leave the page (AT Protocol, which redirects to the replier's PDS)
+     * stages it first so the reply survives the round trip.
+     */
+    requestAuth(onAuthenticated: () => void, onCancel: () => void, context?: { audioBlob?: Blob }): void;
     /** Close the auth sheet without proceeding. */
     dismissAuth(): void;
     /** Trigger the merge-animation phase after a successful reply submission. */
