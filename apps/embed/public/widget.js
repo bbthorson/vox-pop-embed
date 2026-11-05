@@ -43,7 +43,7 @@
         display: block;
       }
     </style>
-    <iframe allow="microphone" scrolling="no" style="overflow:hidden"></iframe>
+    <iframe allow="microphone; screen-wake-lock" scrolling="no" style="overflow:hidden"></iframe>
   `;
 
     class VoxPopPrompt extends HTMLElement {

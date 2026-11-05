@@ -41,6 +41,7 @@ const RECORDING = {
     mimeType: 'audio/webm',
     durationMs: 1200,
     previewUrl: 'blob:mock-recording',
+    interruption: null,
 };
 
 /** A stand-in AnalyserNode — enough surface for HairlineRipple's read loop. */
@@ -240,6 +241,94 @@ describe('ReplyDot ↔ capture-kit wiring', () => {
             expect(onError).toHaveBeenCalledWith(expect.stringMatching(/no microphone found/i)),
         );
         expect(screen.queryByText(/no microphone found/i)).not.toBeInTheDocument();
+    });
+});
+
+describe('ReplyDot interrupted takes', () => {
+    it('keeps a take the mic cut short in review and says why, as a notice', async () => {
+        // The kit ended the take itself — the screen locked, say — and handed
+        // back what it had. That is most of a reply, so it goes to review like
+        // any other take, with a neutral notice rather than an error.
+        const user = userEvent.setup();
+        const onError = vi.fn();
+        const onNotice = vi.fn();
+        recorderOverride = { recording: { ...RECORDING, interruption: 'muted' } };
+        render(
+            <ReplyDot
+                promptId="p1"
+                isEmbed
+                creatorHandle="brad"
+                maxDurationMs={MAX_MS}
+                onError={onError}
+                onNotice={onNotice}
+            />,
+        );
+
+        await recordSomething(user);
+
+        expect(await screen.findByRole('button', { name: /play/i })).toBeInTheDocument();
+        await waitFor(() =>
+            expect(onNotice).toHaveBeenCalledWith(expect.stringMatching(/screen locks/i)),
+        );
+        // A consumer styles `onError` as an alert; this is not one.
+        expect(onError).not.toHaveBeenCalledWith(expect.any(String));
+    });
+
+    it('falls back to onError for a consumer without a notice sink', async () => {
+        const user = userEvent.setup();
+        const onError = vi.fn();
+        recorderOverride = { recording: { ...RECORDING, interruption: 'device-lost' } };
+        render(<ReplyDot promptId="p1" isEmbed creatorHandle="brad" maxDurationMs={MAX_MS} onError={onError} />);
+
+        await recordSomething(user);
+
+        await waitFor(() =>
+            expect(onError).toHaveBeenCalledWith(expect.stringMatching(/microphone disconnected/i)),
+        );
+    });
+
+    it('clears the notice when the take is discarded', async () => {
+        const user = userEvent.setup();
+        const onNotice = vi.fn();
+        recorderOverride = { recording: { ...RECORDING, interruption: 'muted' } };
+        render(<ReplyDot promptId="p1" isEmbed creatorHandle="brad" maxDurationMs={MAX_MS} onNotice={onNotice} />);
+
+        await recordSomething(user);
+        await waitFor(() => expect(onNotice).toHaveBeenCalledWith(expect.any(String)));
+        await user.click(screen.getByRole('button', { name: /discard/i }));
+
+        expect(onNotice).toHaveBeenLastCalledWith(null);
+    });
+
+    it('says nothing extra about a take the person stopped themselves', async () => {
+        const user = userEvent.setup();
+        const onError = vi.fn();
+        const onNotice = vi.fn();
+        render(
+            <ReplyDot
+                promptId="p1"
+                isEmbed
+                creatorHandle="brad"
+                maxDurationMs={MAX_MS}
+                onError={onError}
+                onNotice={onNotice}
+            />,
+        );
+
+        await recordSomething(user);
+
+        await screen.findByRole('button', { name: /play/i });
+        expect(onError).not.toHaveBeenCalledWith(expect.any(String));
+        expect(onNotice).not.toHaveBeenCalledWith(expect.any(String));
+    });
+
+    it('treats an interruption with no audio as a retry, back at idle', async () => {
+        recorderOverride = { status: 'error', errorKind: 'interrupted', analyser: null };
+        render(<ReplyDot promptId="p1" isEmbed creatorHandle="brad" maxDurationMs={MAX_MS} />);
+
+        // No sink at all: the in-dot fallback shows it.
+        expect(await screen.findByText(/keep this screen open/i)).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Start recording your reply' })).toBeInTheDocument();
     });
 });
 

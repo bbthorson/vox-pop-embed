@@ -5,7 +5,7 @@ import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Mic, Square, Send, X, Loader2 } from 'lucide-react';
 import { useAudioRecorder } from '@antiphony/capture-kit';
 import { setAudioSessionType } from '../utils/audio-session';
-import { recorderErrorMessage } from '../recorder-copy';
+import { recorderErrorMessage, recorderInterruptionMessage } from '../recorder-copy';
 import { useContainerSize } from '../hooks/use-container-size';
 import { HairlineRipple } from './HairlineRipple';
 import { CaptureSweep } from './CaptureSweep';
@@ -93,6 +93,17 @@ interface ReplyDotProps {
      * message.
      */
     onError?: (message: string | null) => void;
+    /**
+     * Optional sink for a notice that is *not* an error: why the recorder ended
+     * a take on its own (the screen locked, the microphone disconnected). The
+     * take is kept and shown in review, so a consumer should render this in a
+     * neutral tone rather than as an alert. Fires with `null` when a new take
+     * starts, the take is discarded, or it is sent.
+     *
+     * Without it the notice goes to `onError` instead, so a consumer that
+     * predates this prop still shows something.
+     */
+    onNotice?: (message: string | null) => void;
     /**
      * Origin of the apps/web host that completes the embed handoff —
      * the top-frame redirect target after a pending upload. The URL is
@@ -186,6 +197,7 @@ export function ReplyDot({
     voxPopApiBaseUrl,
     hostAppBaseUrl,
     onError,
+    onNotice,
     dotClassName,
     dotLabel,
     dotLayoutId,
@@ -219,6 +231,21 @@ export function ReplyDot({
     useEffect(() => {
         onErrorRef.current?.(error);
     }, [error]);
+
+    // Same pattern for the neutral notice, through a ref for the same reason.
+    const [notice, setNotice] = useState<string | null>(null);
+    const onNoticeRef = useRef(onNotice);
+    useEffect(() => {
+        onNoticeRef.current = onNotice;
+    });
+    useEffect(() => {
+        onNoticeRef.current?.(notice);
+    }, [notice]);
+    /** Neutral notice where the consumer has a sink for one, else the error sink. */
+    const showNotice = useCallback(
+        (message: string) => (onNoticeRef.current ? setNotice(message) : setError(message)),
+        [],
+    );
 
     // `analyser: true` is opt-in because it opens an AudioContext for the
     // duration of the take, which holds the audio hardware awake and counts
@@ -261,8 +288,14 @@ export function ReplyDot({
      * alike. Only the recording→review edge is a phase change.
      */
     useEffect(() => {
-        if (status === 'recorded' && phase === 'recording') setPhase('review');
-    }, [status, phase]);
+        if (status !== 'recorded' || phase !== 'recording') return;
+        setPhase('review');
+        // The kit ended the take itself (the mic went quiet or away). The audio
+        // so far is kept and goes to review like any other take; the message
+        // says why it stopped, so a cut-off reply is not a mystery. Cleared by
+        // the next tap-to-record, a discard or a send, like the error.
+        if (recording?.interruption) showNotice(recorderInterruptionMessage(recording.interruption));
+    }, [status, phase, recording, showNotice]);
 
     /**
      * Mic failure. Without this a denied or missing mic stranded the user: the
@@ -275,9 +308,12 @@ export function ReplyDot({
      */
     useEffect(() => {
         if (status !== 'error' || !errorKind) return;
-        setError(recorderErrorMessage(errorKind));
+        // Cut off before any audio is not a fault anyone can fix in settings —
+        // it is a retry, so it reads as a notice where the consumer has one.
+        if (errorKind === 'interrupted') showNotice(recorderErrorMessage(errorKind));
+        else setError(recorderErrorMessage(errorKind));
         setPhase('idle');
-    }, [status, errorKind]);
+    }, [status, errorKind, showNotice]);
 
     const needsAuth = useCallback((): boolean => {
         // Embed never auths in the iframe — it uploads anonymously and
@@ -293,6 +329,7 @@ export function ReplyDot({
         // device), the kit lands on `status === 'error'` and the effect above
         // reverts us to idle with a fresh message.
         setError(null);
+        setNotice(null);
         // `reset()` before `start()` is load-bearing, not tidiness: the kit
         // holds `status === 'recorded'` from any previous take, and the
         // record-complete effect above keys on that. Without clearing it
@@ -315,6 +352,7 @@ export function ReplyDot({
         reset();
         setPhase('idle');
         setError(null);
+        setNotice(null);
         // Embed contexts don't have an auth gate; the on-domain path
         // does. Either way, only dismiss if the gate is provided.
         authGate?.dismissAuth();
@@ -344,6 +382,7 @@ export function ReplyDot({
 
         setPhase('sending');
         setError(null);
+        setNotice(null);
 
         try {
             const formData = new FormData();
@@ -438,6 +477,7 @@ export function ReplyDot({
         // If anything below fails we revert to `review` with the error.
         setPhase('sending');
         setError(null);
+        setNotice(null);
         authGate.dismissAuth();
 
         // Token retrieval — `forceRefresh: false` (the default). The auth

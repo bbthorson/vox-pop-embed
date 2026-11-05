@@ -29,8 +29,11 @@ from `@vox-pop/design-tokens`.
 | `height` | Optional CSS height. The default is a 600px minimum. |
 | `mode` | Optional. `card` is a compact layout that sizes itself; the default is `embed`. |
 
-The iframe asks for `allow="microphone"`. The listener's browser prompts for
-microphone access the first time they record.
+The iframe asks for `allow="microphone; screen-wake-lock"`. The listener's
+browser prompts for microphone access the first time they record. The wake lock
+needs no prompt: it keeps a phone's screen on while recording, because a locked
+screen stops the recording. A framing page that leaves `screen-wake-lock` out
+still works; the screen can just lock mid-reply.
 
 ## How a reply gets in
 

@@ -89,6 +89,9 @@ export function EmbedPrompt({
     // lives inside a round `overflow-hidden` DotMark that clips wide captions,
     // so the status text can't live inside the circle.
     const [replyError, setReplyError] = useState<string | null>(null);
+    // Why the recorder stopped a take on its own — same placement, neutral
+    // tone: the take is still in the dot, ready to send.
+    const [replyNotice, setReplyNotice] = useState<string | null>(null);
 
     return (
         /**
@@ -133,6 +136,7 @@ export function EmbedPrompt({
                             voxPopApiBaseUrl={voxPopApiBaseUrl}
                             hostAppBaseUrl={hostAppBaseUrl}
                             onError={setReplyError}
+                            onNotice={setReplyNotice}
                             dotClassName={EMBED_DOT_SIZE}
                             maxDurationMs={maxDurationMs}
                         />
@@ -161,6 +165,11 @@ export function EmbedPrompt({
                 {replyError && (
                     <p role="alert" className="mt-3 text-center text-sm text-destructive">
                         {replyError}
+                    </p>
+                )}
+                {replyNotice && (
+                    <p role="status" className="mt-3 text-center text-sm text-ink-muted">
+                        {replyNotice}
                     </p>
                 )}
             </div>

@@ -5,7 +5,7 @@ import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Mic, Square, Play, Pause, Send, ArrowRight, X } from 'lucide-react';
 import { useAudioRecorder } from '@antiphony/capture-kit';
 import { setAudioSessionType } from '../utils/audio-session';
-import { recorderErrorMessage } from '../recorder-copy';
+import { recorderErrorMessage, recorderInterruptionMessage } from '../recorder-copy';
 import { useContainerSize } from '../hooks/use-container-size';
 import { HairlineRipple } from './HairlineRipple';
 import { CaptureSweep } from './CaptureSweep';
@@ -40,6 +40,14 @@ interface RecordingContentProps {
     onRecordingStatusChange?: (isRecording: boolean) => void;
     /** Called with permission error message */
     onPermissionError?: (error: string) => void;
+    /**
+     * Called with a message about a take the recorder ended on its own — the
+     * microphone went quiet (screen locked, page left) or disconnected — and
+     * with `null` when a new take starts or the take is discarded. Separate
+     * from `onPermissionError` because it is not a denial: the take, if any,
+     * is still in review, and the consumer should not title it as an error.
+     */
+    onNotice?: (message: string | null) => void;
     /** Called when the phase changes */
     onPhaseChange?: (phase: RecordPhase) => void;
     /** Called with elapsed recording seconds */
@@ -95,6 +103,7 @@ export function RecordingContent({
     audioBlob,
     onRecordingStatusChange,
     onPermissionError,
+    onNotice,
     onPhaseChange,
     onRecordingSecondsChange,
     onAccept,
@@ -150,7 +159,8 @@ export function RecordingContent({
         if (status !== 'recorded' || phase !== 'recording' || !recording) return;
         onRecordingComplete(recording.blob);
         updatePhase('review');
-        // `onRecordingComplete` and `updatePhase` are excluded deliberately —
+        if (recording.interruption) onNotice?.(recorderInterruptionMessage(recording.interruption));
+        // `onRecordingComplete`, `updatePhase` and `onNotice` are excluded deliberately —
         // both are recreated every render by the caller, and including them
         // would re-fire this on each one. Keyed on the state transition, which
         // is the actual event. Same convention as the mount note above.
@@ -158,8 +168,17 @@ export function RecordingContent({
 
     useEffect(() => {
         if (status !== 'error' || !errorKind) return;
+        // Cut off before any audio: not a denial, so it is a notice — the
+        // consumer titles `onPermissionError` as a refused microphone.
+        if (errorKind === 'interrupted') {
+            onNotice?.(recorderErrorMessage(errorKind));
+            updatePhase('idle');
+            return;
+        }
         onPermissionError?.(recorderErrorMessage(errorKind));
-    }, [status, errorKind, onPermissionError]);
+        // `updatePhase` is recreated every render; excluded for the same
+        // reason as in the record-complete effect above.
+    }, [status, errorKind, onPermissionError, onNotice]);
 
     /**
      * The elapsed counter is the kit's now. It ticks one interval for both the
@@ -204,6 +223,8 @@ export function RecordingContent({
         // the record-complete effect the instant the phase flips — see
         // ReplyDot's handleTapToRecord for the same note.
         reset();
+        // A new take retires the last one's interruption notice.
+        onNotice?.(null);
         // Undo ListenDot's `playback` category, which does not permit capture.
         setAudioSessionType('play-and-record');
         start();
@@ -221,6 +242,7 @@ export function RecordingContent({
             audioPlaybackRef.current = null;
         }
         updatePhase('idle');
+        onNotice?.(null);
         onDiscard();
     };
 

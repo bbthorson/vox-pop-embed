@@ -82,7 +82,8 @@ export { useContainerSize } from './hooks/use-container-size';
  * Deliberately not re-exported, and neither is `recorderErrorMessage` beside
  * it: no app ever imported the hook (both consumers are components in this
  * package), and the error copy reaches consumers already mapped, through
- * `ReplyDot`'s `onError` and `RecordingContent`'s `onPermissionError`. Passing
+ * `ReplyDot`'s `onError` and `RecordingContent`'s `onPermissionError` /
+ * `onNotice`. Passing
  * either through the design system would add a name to keep in step and buy
  * nothing. What stays here is the half the kit deliberately does not have —
  * the dots, `HairlineRipple`, the motion presets: what a record button looks
