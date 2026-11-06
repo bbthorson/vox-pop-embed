@@ -37,7 +37,7 @@
   },
   "//@antiphony/capture-kit": "The MediaRecorder state machine, which this package used to hand-roll. A caret, unlike the exact pin `packages/shared` puts on `@antiphony/shared`: that one is a protocol contract where an unattended bump is how drift starts, this is browser primitives with no wire shape to disagree about. On a 0.x version a caret already admits patches only.",
   "dependencies": {
-    "@antiphony/capture-kit": "^0.2.0",
+    "@antiphony/capture-kit": "^0.2.1",
     "@vox-pop/design-tokens": "*",
     "clsx": "^2.1.1",
     "framer-motion": "^11.15.0",
