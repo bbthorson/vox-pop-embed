@@ -1,5 +1,6 @@
 import React from 'react';
 import { cn } from '../utils/cn';
+import { META_LABEL_CLASS } from '@vox-pop/design-tokens/classes';
 
 type EditorialProps<T extends React.ElementType> = {
     as?: T;
@@ -103,12 +104,9 @@ export function EditorialMeta<T extends React.ElementType = 'span'>({
     const Component = (as || 'span') as React.ElementType;
     return (
         <Component
-            className={cn(
-                'font-heading font-bold text-ink-subtle',
-                'text-xs uppercase tracking-meta',
-                '[.register-marketing_&]:font-mono [.register-marketing_&]:font-normal',
-                className
-            )}
+            // The shared meta-label treatment (design-tokens/classes) — the
+            // same string ui's MetaLabel uses, so the two cannot drift.
+            className={cn(META_LABEL_CLASS, 'text-xs text-ink-subtle', className)}
             {...rest}
         >
             {children}

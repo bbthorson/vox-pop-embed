@@ -53,7 +53,11 @@
     --accent: 32 70% 62%;
     /* Dark ink, not white: white on this accent is 2.20, warm near-black 7.60. */
     --accent-foreground: 20 25% 12%;
-    --destructive: 0 84.2% 60.2%;
+    /* Status colors follow primary's method: the lightest value clearing AA as
+       text on every ground AND as a fill under its foreground. One value per
+       register serves `text-destructive`, `bg-destructive/10` and the solid
+       fill alike. See the status docblock in tokens.ts for the numbers. */
+    --destructive: 0 72% 42%;
     --destructive-foreground: 0 0% 100%;
     --border: 28 22% 88%;
     /* Control boundaries, NOT decorative rules — see --border above. 52% is the
@@ -70,13 +74,16 @@
        of this file for why that distinction has to exist. */
     --radius-plate: 0.75rem;
 
-    /* Enhanced color palette */
-    --success: 158 64% 42%;
-    --success-foreground: 158 64% 97%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 48 96% 89%;
-    --info: 199 89% 48%;
-    --info-foreground: 204 94% 94%;
+    /* Status palette. Text-safe in light registers means dark, so success and
+       destructive cannot differ much in lightness here; success sits at teal
+       (174) rather than green so red-green colour-blind users still separate
+       the two on the blue-yellow axis. Status never rides on colour alone. */
+    --success: 174 80% 24%;
+    --success-foreground: 0 0% 100%;
+    --warning: 32 95% 31%;
+    --warning-foreground: 0 0% 100%;
+    --info: 205 85% 36%;
+    --info-foreground: 0 0% 100%;
 
     /* Cross-register semantic tokens (shared by workspace and editorial) */
     /* Scrim — near-black in both schemes; used with an alpha modifier only. */
@@ -87,7 +94,11 @@
     --ink-strong: 20 25% 12%;
     --ink-muted: 25 14% 32%;
     --ink-subtle: 25 14% 42%;
-    --accent-warm: 20 75% 55%;
+    /* 50%, not 55%: the `ring` DotMark draws its stroke in this tone and a
+       "your turn" ring carries meaning, so it needs 3:1 on every ground. 55%
+       measured 2.80 on the sunken surface; 50% clears 3.17. Still decorative
+       as text below 24px. */
+    --accent-warm: 20 75% 50%;
     --rule: 28 18% 78%;
     --shadow-editorial: 0 6px 24px -8px hsl(20 15% 15% / 0.08), 0 2px 6px -2px hsl(20 15% 15% / 0.04);
   }
@@ -114,16 +125,18 @@
     --accent: 20 55% 55%;
     /* Dark ink on the accent (5.00) rather than white (1.90). */
     --accent-foreground: 20 25% 12%;
-    --destructive: 0 62.8% 45%;
-    --destructive-foreground: 210 40% 98%;
+    /* Light red with dark ink on the fill: 0 62.8% 45% read 2.6-3.1:1 as text
+       on the espresso grounds. */
+    --destructive: 0 85% 68%;
+    --destructive-foreground: 0 0% 10%;
     --border: 24 14% 20%;
     /* 44% — tightest ground is editorial dark's raised surface at 3.17. */
     --input: 24 14% 44%;
     --ring: 14 88% 62%;
 
     /* Enhanced color palette for dark mode */
-    --success: 158 60% 50%;
-    --success-foreground: 158 60% 97%;
+    --success: 170 55% 52%;
+    --success-foreground: 0 0% 10%;
     --warning: 38 92% 56%;
     --warning-foreground: 48 96% 12%;
     --info: 199 89% 56%;
@@ -177,7 +190,7 @@
        staying clearly lighter than ink-muted (32%) so the ink ramp keeps
        its hierarchy. Editorial dark-mode ink-subtle already clears AA. */
     --ink-subtle: 25 14% 42%;
-    --accent-warm: 20 75% 55%;
+    --accent-warm: 20 75% 50%;
     --rule: 28 18% 78%;
     --shadow-editorial: 0 6px 24px -8px hsl(20 15% 15% / 0.08), 0 2px 6px -2px hsl(20 15% 15% / 0.04);
   }
@@ -207,7 +220,9 @@
     --surface-sunken: 24 14% 7%;
     --ink-strong: 32 28% 94%;
     --ink-muted: 32 16% 72%;
-    --ink-subtle: 32 12% 52%;
+    /* 55%, not the workspace's 52%: editorial dark's raised cards are a step
+       lighter (14%), where 52% measured 4.37. 55% clears 4.82. */
+    --ink-subtle: 32 12% 55%;
     --accent-warm: 20 70% 60%;
     --rule: 24 14% 24%;
     --shadow-editorial: 0 6px 24px -8px hsl(0 0% 0% / 0.4), 0 2px 6px -2px hsl(0 0% 0% / 0.3);

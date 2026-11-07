@@ -7,6 +7,8 @@
  *   `@vox-pop/design-tokens/tokens`         — TypeScript constants
  *   `@vox-pop/design-tokens/tailwind-preset` — shared Tailwind preset
  *   `@vox-pop/design-tokens/fonts`           — font config constants
+ *   `@vox-pop/design-tokens/classes`         — shared Tailwind class strings
+ *                                              (build-free; not re-exported here)
  *
  * The bare `@vox-pop/design-tokens` import is a convenience for callers
  * that want a couple of values without picking a subpath.

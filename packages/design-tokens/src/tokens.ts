@@ -82,6 +82,27 @@ export interface TokenSet {
     shadowEditorial: string;
 }
 
+/*
+ * STATUS COLORS (`destructive`, `success`, `warning`, `info`).
+ *
+ * Retuned the way `primary` was in D7: one value per register that clears AA
+ * both as TEXT on every ground it sits on (page, card, muted, sunken, and its
+ * own 5% / 10% tint) and as a FILL under its `-foreground`. That lets
+ * `text-destructive`, `bg-destructive/10 text-destructive` and the solid
+ * button all share one token. Minimum measured ratios:
+ *
+ *   light registers   destructive 5.16 · success 4.99 · warning 4.72 · info 4.76
+ *                     (white on the fill: 6.47 · 6.11 · 5.76 · 5.82)
+ *   dark registers    destructive 5.18 · success 7.31 · warning 7.64 · info 6.53
+ *                     (dark ink on the fill: 5.82 · 8.43 · 6.62 · 6.71)
+ *
+ * Text-safe on near-white means dark, so in the light registers success and
+ * destructive cannot be pulled far apart in lightness (~1.2:1). Success sits
+ * at teal (174) instead of green (158) so a red-green colour-blind reader
+ * still separates them on the blue-yellow axis, and every status ALSO carries
+ * a word or an icon — colour is never the only signal.
+ */
+
 /**
  * Light, workspace register (`:root`).
  *
@@ -119,7 +140,8 @@ export const lightTokens: TokenSet = {
     // documented in D7. Warm near-black measures 7.60, which is what makes a
     // solid `bg-accent` fill safe to use at all.
     accentForeground: '20 25% 12%',
-    destructive: '0 84.2% 60.2%',
+    // Status colors follow primary's method — see STATUS COLORS above.
+    destructive: '0 72% 42%',
     destructiveForeground: '0 0% 100%',
     border: '28 22% 88%',
     // Control boundaries only. Held apart from `border` on purpose: `border`
@@ -133,12 +155,12 @@ export const lightTokens: TokenSet = {
     radius: '0.75rem',
     radiusPlate: '0.75rem',
 
-    success: '158 64% 42%',
-    successForeground: '158 64% 97%',
-    warning: '38 92% 50%',
-    warningForeground: '48 96% 89%',
-    info: '199 89% 48%',
-    infoForeground: '204 94% 94%',
+    success: '174 80% 24%',
+    successForeground: '0 0% 100%',
+    warning: '32 95% 31%',
+    warningForeground: '0 0% 100%',
+    info: '205 85% 36%',
+    infoForeground: '0 0% 100%',
 
     overlay: '20 25% 8%',
     overlayForeground: '0 0% 100%',
@@ -148,7 +170,9 @@ export const lightTokens: TokenSet = {
     inkStrong: '20 25% 12%',
     inkMuted: '25 14% 32%',
     inkSubtle: '25 14% 42%',
-    accentWarm: '20 75% 55%',
+    // 50%: the `ring` DotMark strokes in this tone and needs 3:1 on every
+    // ground — 55% measured 2.80 on the sunken surface, 50% clears 3.17.
+    accentWarm: '20 75% 50%',
     rule: '28 18% 78%',
     shadowEditorial:
         '0 6px 24px -8px hsl(20 15% 15% / 0.08), 0 2px 6px -2px hsl(20 15% 15% / 0.04)',
@@ -180,8 +204,8 @@ export const darkTokens: TokenSet = {
     // Same reasoning as the light register: dark ink on the accent (5.00)
     // rather than white (1.90).
     accentForeground: '20 25% 12%',
-    destructive: '0 62.8% 45%',
-    destructiveForeground: '210 40% 98%',
+    destructive: '0 85% 68%',
+    destructiveForeground: '0 0% 10%',
     border: '24 14% 20%',
     // 44% — tightest ground is editorial dark's raised surface, at 3.17.
     input: '24 14% 44%',
@@ -189,8 +213,8 @@ export const darkTokens: TokenSet = {
     radius: '0.75rem',
     radiusPlate: '0.75rem',
 
-    success: '158 60% 50%',
-    successForeground: '158 60% 97%',
+    success: '170 55% 52%',
+    successForeground: '0 0% 10%',
     warning: '38 92% 56%',
     warningForeground: '48 96% 12%',
     info: '199 89% 56%',
@@ -266,7 +290,9 @@ export const editorialTokens: TokenSet = {
     // the 12px EditorialMeta labels) to 42% (4.96:1). tokens.css carried this
     // fix; this twin was left behind until the lockstep test caught it.
     inkSubtle: '25 14% 42%',
-    accentWarm: '20 75% 55%',
+    // 50%: the `ring` DotMark strokes in this tone and needs 3:1 on every
+    // ground — 55% measured 2.80 on the sunken surface, 50% clears 3.17.
+    accentWarm: '20 75% 50%',
     rule: '28 18% 78%',
     shadowEditorial:
         '0 6px 24px -8px hsl(20 15% 15% / 0.08), 0 2px 6px -2px hsl(20 15% 15% / 0.04)',
@@ -320,7 +346,9 @@ export const darkEditorialTokens: TokenSet = {
     surfaceSunken: '24 14% 7%',
     inkStrong: '32 28% 94%',
     inkMuted: '32 16% 72%',
-    inkSubtle: '32 12% 52%',
+    // 55%, not the workspace's 52%: this register's raised cards are a step
+    // lighter (14%), where 52% measured 4.37. 55% clears 4.82.
+    inkSubtle: '32 12% 55%',
     accentWarm: '20 70% 60%',
     rule: '24 14% 24%',
     shadowEditorial:

@@ -14,7 +14,8 @@ interface DotMarkProps {
     /**
      * Visual treatment:
      * - `filled`: solid surface, heavy border, shadow — "content lives here"
-     * - `ring`: transparent with outlined stroke — "awaiting content"
+     * - `ring`: transparent with outlined stroke — "awaiting content". The
+     *   stroke is full-strength (>= 3:1) because this state carries meaning.
      * - `ghost`: muted, subtle — for merged or quiescent states
      */
     variant?: DotMarkVariant;
@@ -73,11 +74,16 @@ export function DotMark({
                   ? 'border-accent-warm/40'
                   : 'border-rule'
             : variant === 'ring'
-              ? tone === 'primary'
-                  ? 'border-primary/60'
+              ? // A ring means "your turn" — it carries meaning, so its stroke
+                // must clear WCAG 1.4.11's 3:1 on every ground in every
+                // register. No alpha: the old /60 and /70 strokes measured
+                // 1.9-2.6:1 in the light registers. The muted ring takes the
+                // control-boundary token, not `--rule` (1.6:1).
+                tone === 'primary'
+                  ? 'border-primary'
                   : tone === 'accent-warm'
-                    ? 'border-accent-warm/70'
-                    : 'border-rule'
+                    ? 'border-accent-warm'
+                    : 'border-input'
               : 'border-rule/50';
 
     const mergedStyle: React.CSSProperties = size
@@ -115,7 +121,9 @@ export function DotMark({
                     className={cn(
                         'absolute left-0 right-0 text-center pointer-events-none select-none',
                         'font-heading font-bold uppercase text-2xs tracking-[0.18em]',
-                        tone === 'accent-warm' ? 'text-accent-warm/70' : 'text-ink-subtle',
+                        // Always ink-subtle: terracotta at /70 is ~2:1, and this
+                        // is real text, not decoration.
+                        'text-ink-subtle',
                         labelPosClass
                     )}
                 >

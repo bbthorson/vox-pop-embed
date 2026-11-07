@@ -23,5 +23,7 @@ export default {
         // `@vox-pop/brand-ui` source — Tailwind regex-greps these files
         // for class names, so we point at src rather than built dist.
         '../../packages/brand-ui/src/**/*.{ts,tsx}',
+        // Class strings shared by ui and brand-ui (META_LABEL_CLASS).
+        '../../packages/design-tokens/src/classes.mjs',
     ],
 } satisfies Config;

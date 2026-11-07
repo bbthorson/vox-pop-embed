@@ -38,12 +38,18 @@
     "./fonts": {
       "types": "./dist/fonts.d.ts",
       "default": "./dist/fonts.js"
+    },
+    "./classes": {
+      "types": "./src/classes.d.ts",
+      "default": "./src/classes.mjs"
     }
   },
   "files": [
     "dist",
     "src/tokens.css",
-    "src/motion.css"
+    "src/motion.css",
+    "src/classes.mjs",
+    "src/classes.d.ts"
   ],
   "scripts": {
     "build": "tsc",
