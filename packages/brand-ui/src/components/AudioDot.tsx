@@ -23,7 +23,7 @@ export interface AudioDotProps {
      */
     fallback?: React.ReactNode;
     /** See `ListenDot` — progress sink, end-of-clip hook, and autoplay. */
-    onProgress?: (progress: number, isPlaying: boolean) => void;
+    onProgress?: (progress: number, isPlaying: boolean, positionMs: number) => void;
     onEnded?: () => void;
     autoPlay?: boolean;
 

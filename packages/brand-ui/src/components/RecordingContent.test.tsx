@@ -119,3 +119,23 @@ describe('RecordingContent interruption notices', () => {
         expect(onNotice).not.toHaveBeenCalledWith(expect.any(String));
     });
 });
+
+describe('RecordingContent discard flank', () => {
+    it('reads as a plain discard by default', async () => {
+        const user = userEvent.setup();
+        renderRecorder();
+        await recordSomething(user);
+        expect(await screen.findByRole('button', { name: 'Discard recording' })).toBeInTheDocument();
+    });
+
+    it('reads as a retake where the caller says a retake is the edit', async () => {
+        const user = userEvent.setup();
+        const { onDiscard } = renderRecorder({ discardStyle: 'rerecord' });
+        await recordSomething(user);
+
+        await user.click(await screen.findByRole('button', { name: 'Discard and record again' }));
+        expect(onDiscard).toHaveBeenCalled();
+        // Back to a ready-to-record dot: one tap from the next take.
+        expect(await screen.findByRole('button', { name: 'Start recording' })).toBeInTheDocument();
+    });
+});

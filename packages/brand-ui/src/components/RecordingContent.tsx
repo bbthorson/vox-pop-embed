@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Mic, Square, Play, Pause, Send, ArrowRight, X } from 'lucide-react';
+import { Mic, Square, Play, Pause, Send, ArrowRight, RotateCcw, X } from 'lucide-react';
 import { useAudioRecorder } from '@antiphony/capture-kit';
 import { setAudioSessionType } from '../utils/audio-session';
 import { recorderErrorMessage, recorderInterruptionMessage } from '../recorder-copy';
@@ -68,6 +68,15 @@ interface RecordingContentProps {
      * the button doesn't promise more than it does.
      */
     acceptIcon?: 'send' | 'continue';
+    /**
+     * What the left flank in `review` says it does. Both throw the take away
+     * and return to a ready-to-record dot; they differ in what the user is
+     * told. `discard` (an X, "Discard recording") for a surface where dropping
+     * the take is the end of it. `rerecord` (a circular arrow, "Discard and
+     * record again") where the creator is expected to take another run at the
+     * same thing, as on New Prompt, which has no editor: a retake is its edit.
+     */
+    discardStyle?: 'discard' | 'rerecord';
     /** Size/shape class for the dot (e.g. `w-full h-full`). */
     dotClassName?: string;
     /** Dot color tone. Defaults to the canonical coral. */
@@ -109,6 +118,7 @@ export function RecordingContent({
     onAccept,
     acceptLabel = 'Accept recording',
     acceptIcon = 'send',
+    discardStyle = 'discard',
     dotClassName,
     dotTone = 'primary',
     maxDurationMs,
@@ -383,9 +393,13 @@ export function RecordingContent({
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.18 }}
-                        aria-label="Discard recording"
+                        aria-label={discardStyle === 'rerecord' ? 'Discard and record again' : 'Discard recording'}
                     >
-                        <X className="h-5 w-5 text-muted-foreground" />
+                        {discardStyle === 'rerecord' ? (
+                            <RotateCcw className="h-5 w-5 text-muted-foreground" />
+                        ) : (
+                            <X className="h-5 w-5 text-muted-foreground" />
+                        )}
                     </m.button>
                 )}
 

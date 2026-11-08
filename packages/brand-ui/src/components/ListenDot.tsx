@@ -48,8 +48,13 @@ interface ListenDotProps {
    * frame while playing, and once on pause/end. Lets a consumer keep something
    * outside the circle in step with the audio (the marketing hero reveals a
    * transcript against it) without owning a second `<audio>`.
+   *
+   * `positionMs` is the playhead itself, for a consumer that times things in
+   * milliseconds (captions against Antiphony's transcript segments) rather
+   * than as a fraction of a duration it would otherwise have to know. `0` at
+   * the end of the clip, matching the dot resetting to its start.
    */
-  onProgress?: (progress: number, isPlaying: boolean) => void;
+  onProgress?: (progress: number, isPlaying: boolean, positionMs: number) => void;
   /** Fires when the clip plays to the end. */
   onEnded?: () => void;
   /**
@@ -163,7 +168,7 @@ export function ListenDot({
     audio.addEventListener('ended', () => {
       setIsPlaying(false);
       setProgress(0);
-      onProgressRef.current?.(1, false);
+      onProgressRef.current?.(1, false, 0);
       if (currentMediaSessionOwner === mediaSessionTokenRef.current && 'mediaSession' in navigator) {
         navigator.mediaSession.playbackState = 'none';
       }
@@ -214,7 +219,7 @@ export function ListenDot({
     if (audio && audio.duration) {
       const p = audio.currentTime / audio.duration;
       setProgress(p);
-      onProgressRef.current?.(p, true);
+      onProgressRef.current?.(p, true, audio.currentTime * 1000);
       // Feed the lockscreen scrubber while we own MediaSession.
       if (
         currentMediaSessionOwner === mediaSessionTokenRef.current &&
@@ -255,7 +260,11 @@ export function ListenDot({
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
-      onProgressRef.current?.(audio.duration ? audio.currentTime / audio.duration : 0, false);
+      onProgressRef.current?.(
+        audio.duration ? audio.currentTime / audio.duration : 0,
+        false,
+        audio.currentTime * 1000,
+      );
       if (currentMediaSessionOwner === mediaSessionTokenRef.current && 'mediaSession' in navigator) {
         navigator.mediaSession.playbackState = 'paused';
       }
