@@ -1,6 +1,7 @@
 {
   "name": "@vox-pop/embed",
   "version": "0.1.0",
+  "license": "MIT",
   "private": true,
   "description": "Vox Pop embed — standalone Vite + React SPA serving the chrome-less prompt iframe. Cross-origin from apps/web; reads the Vox Pop BFF (@vox-pop/api) directly. Deploys as static assets to embed.voxpop.audio.",
   "type": "module",

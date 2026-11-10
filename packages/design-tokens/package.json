@@ -1,6 +1,7 @@
 {
   "name": "@vox-pop/design-tokens",
   "version": "0.1.0",
+  "license": "MIT",
   "private": true,
   "description": "Vox Pop design tokens — CSS variables, TS constants, and the shared Tailwind preset consumed by apps/web (Next.js) and apps/embed (Vite, future).",
   "main": "dist/index.js",
